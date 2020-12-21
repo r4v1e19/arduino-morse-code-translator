@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script type="text/javascript">
+        //Sprawdzamy czy przeglądarka obsługuje wtyczne "WebSocket" - akurat chrome obsługuje, więc użyłem go.
+        if ("WebSocket" in window) {
+            //Inicjalizujemy obiekt z biblioteki Websocket w programie processing
+            var ws = new WebSocket("ws://localhost:1337/p5websocket");
+        } else {
+            //Jeśli przeglądarka nie obsługuje wtyczki, wypisz następujący tekst:
+            alert("WebSocket NOT supported by your Browser!");
+        }
+        //Inicjalizacja zmiennej recognition
+        var recognition = new webkitSpeechRecognition();
+        //ustawiając metodę continuous na true, pozwalamy by mikrofon przechwytywał nieprzerwanie.
+        recognition.continuous = true;
+        recognition.onresult = function(event) {
+            //Do zmiennej transcript przypisz słowa, które ktoś wypowiedział
+            var transcript = event.results[event.results.length-1][0].transcript;
+            //Wyślij wynik (string) używając odpowiedniej funkcji do programu Processing
+			ws.send(transcript);
+        }
+        // Rozpoczynanie rozpoznawania języka
+        recognition.start();
+        
+        // Zrestartuj rozpoznawanie języka, jeśli trwa ono zbyt długo.
+        recognition.onend = function(){
+            recognition.start();
+        }
+</script>
+</head>
+<body>
+<center>
+<img src="mors.jpg" alt="Simply Easy Learning">
+</center>
+</body>
+</html>
